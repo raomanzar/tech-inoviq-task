@@ -79,10 +79,7 @@ const TeamModal = memo(
 
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm"
-          onClick={onClose}
-        />
+        <div className="fixed inset-0  backdrop-blur-xl" onClick={onClose} />
         <div className="relative bg-white rounded-lg p-4 sm:p-6 w-full max-w-md max-h-[80vh] sm:max-h-[70vh] overflow-y-auto">
           <div className="flex items-center justify-between mb-3 sm:mb-4">
             <h3 className="text-base sm:text-lg font-semibold">

@@ -180,7 +180,7 @@ const TeamSidebar = memo(function TeamSidebar({
 
   return (
     <div className="fixed inset-0 z-50 flex">
-      <div className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm" onClick={onClose} />
+      <div className="fixed inset-0 backdrop-blur-xl" onClick={onClose} />
       <div className="relative ml-auto w-full sm:w-96 max-w-md bg-white h-full shadow-xl overflow-y-auto">
         <div className="sticky top-0 bg-white border-b border-gray-200 p-3 sm:p-4">
           <div className="flex items-center justify-between">
@@ -197,7 +197,9 @@ const TeamSidebar = memo(function TeamSidebar({
         <div className="p-3 sm:p-4 space-y-3 sm:space-y-4">
           {/* Create Team Section */}
           <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
-            <h3 className="font-semibold mb-2 text-sm sm:text-base">Create New Team</h3>
+            <h3 className="font-semibold mb-2 text-sm sm:text-base">
+              Create New Team
+            </h3>
             {!isCreating ? (
               <button
                 onClick={() => setIsCreating(true)}
@@ -280,7 +282,7 @@ const TeamSidebar = memo(function TeamSidebar({
                     </div>
                   ) : (
                     // Normal Mode
-                    <div 
+                    <div
                       className="cursor-pointer"
                       onClick={() => setCurrentTeam(team)}
                     >
