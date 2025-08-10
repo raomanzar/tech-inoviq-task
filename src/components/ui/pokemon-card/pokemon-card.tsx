@@ -178,16 +178,16 @@ const PokemonCard = memo(function PokemonCard({
 
   return (
     <>
-      <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
-        <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-6">
-          <div className="flex justify-between items-start">
-            <div>
-              <h2 className="text-3xl font-bold text-white capitalize">
+      <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-4 sm:p-6">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-0">
+            <div className="order-1">
+              <h2 className="text-2xl sm:text-3xl font-bold text-white capitalize">
                 {pokemon.name}
               </h2>
               <p className="text-white/80 mt-1">#{pokemonNumber}</p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 order-2">
               {pokemon.types.map((type) => (
                 <TypeBadge key={type.slot} type={type.type.name} />
               ))}
@@ -195,16 +195,16 @@ const PokemonCard = memo(function PokemonCard({
           </div>
         </div>
 
-        <div className="p-6">
-          <div className="flex flex-col md:flex-row gap-6">
+        <div className="p-4 sm:p-6">
+          <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
             {/* Pokemon Image */}
-            <div className="flex-shrink-0 mx-auto">
+            <div className="flex-shrink-0 mx-auto lg:mx-0">
               <Image
                 src={imageUrl}
                 alt={pokemon.name}
-                width={200}
-                height={200}
-                className="object-contain"
+                width={160}
+                height={160}
+                className="object-contain sm:w-[200px] sm:h-[200px]"
                 priority
                 placeholder="blur"
                 blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mN8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg=="
@@ -212,9 +212,9 @@ const PokemonCard = memo(function PokemonCard({
             </div>
 
             {/* Pokemon Info */}
-            <div className="flex-grow space-y-4">
+            <div className="flex-grow space-y-3 sm:space-y-4">
               {/* Basic Info */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <p className="text-gray-600 text-sm">Height</p>
                   <p className="font-semibold">{heightInMeters} m</p>
@@ -252,16 +252,16 @@ const PokemonCard = memo(function PokemonCard({
       </div>
 
       {/* Back Button and Team Actions */}
-      <div className="text-center mt-4 space-y-2">
+      <div className="text-center mt-4 sm:mt-6 space-y-3 px-4 sm:px-0">
         {currentTeam && (
-          <div className="mb-4">
-            <p className="text-sm text-gray-600 mb-2">
+          <div className="mb-4 sm:mb-6">
+            <p className="text-sm text-gray-600 mb-3">
               Current Team: <span className="font-medium">{currentTeam.name}</span>
             </p>
             <button
               onClick={handleAddToTeam}
               disabled={!canAdd}
-              className={`px-4 py-2 rounded-md font-medium transition-colors ${
+              className={`w-full sm:w-auto px-6 py-3 rounded-md font-medium transition-colors text-sm sm:text-base ${
                 canAdd
                   ? "bg-green-600 hover:bg-green-700 text-white"
                   : "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -277,7 +277,7 @@ const PokemonCard = memo(function PokemonCard({
         )}
         <button
           onClick={onBack}
-          className="text-blue-600 hover:text-blue-800 underline cursor-pointer transition-colors"
+          className="w-full sm:w-auto text-blue-600 hover:text-blue-800 underline cursor-pointer transition-colors text-sm sm:text-base py-2"
           type="button"
           aria-label="Back to Pokemon list"
         >

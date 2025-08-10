@@ -3,6 +3,8 @@ import React from "react";
 import { useTeamContext } from "@/contexts/TeamContext";
 import { Team } from "@/types/team";
 import Image from "next/image";
+import Link from "next/link";
+import { ArrowBack } from "@mui/icons-material";
 
 const TYPE_COLORS: Record<string, string> = {
   normal: "bg-gray-400",
@@ -40,34 +42,34 @@ const TeamCard = ({ team }: { team: Team }) => {
   const stats = getTeamStats(team);
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
-      <div className="mb-4">
-        <h3 className="text-xl font-bold text-gray-800 mb-2">{team.name}</h3>
-        <p className="text-sm text-gray-500">
+    <div className="bg-white border border-gray-200 rounded-lg p-4 sm:p-6 shadow-md hover:shadow-lg transition-shadow">
+      <div className="mb-3 sm:mb-4">
+        <h3 className="text-lg sm:text-xl font-bold text-gray-800 mb-1 sm:mb-2">{team.name}</h3>
+        <p className="text-xs sm:text-sm text-gray-500">
           Created: {new Date(team.createdAt).toLocaleDateString()}
         </p>
       </div>
 
       {/* Team Stats */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-        <h4 className="font-semibold text-blue-800 mb-2">Team Stats</h4>
-        <div className="grid grid-cols-3 gap-4 text-sm">
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 mb-3 sm:mb-4">
+        <h4 className="font-semibold text-blue-800 mb-2 text-sm sm:text-base">Team Stats</h4>
+        <div className="grid grid-cols-3 gap-2 sm:gap-4 text-xs sm:text-sm">
           <div className="text-center">
-            <div className="text-lg font-bold text-blue-600">{team.pokemon.length}/6</div>
-            <div className="text-blue-700">Pokemon</div>
+            <div className="text-base sm:text-lg font-bold text-blue-600">{team.pokemon.length}/6</div>
+            <div className="text-blue-700 text-xs sm:text-sm">Pokemon</div>
           </div>
           <div className="text-center">
-            <div className="text-lg font-bold text-blue-600">{stats.totalTypes}</div>
-            <div className="text-blue-700">Types</div>
+            <div className="text-base sm:text-lg font-bold text-blue-600">{stats.totalTypes}</div>
+            <div className="text-blue-700 text-xs sm:text-sm">Types</div>
           </div>
           <div className="text-center">
-            <div className="text-lg font-bold text-blue-600">{stats.averageBaseExperience}</div>
-            <div className="text-blue-700">Avg Base Exp</div>
+            <div className="text-base sm:text-lg font-bold text-blue-600">{stats.averageBaseExperience}</div>
+            <div className="text-blue-700 text-xs sm:text-sm">Avg Base Exp</div>
           </div>
         </div>
         {stats.typesCovered.length > 0 && (
-          <div className="mt-3">
-            <div className="text-sm text-blue-700 mb-1">Type Coverage:</div>
+          <div className="mt-2 sm:mt-3">
+            <div className="text-xs sm:text-sm text-blue-700 mb-1">Type Coverage:</div>
             <div className="flex flex-wrap gap-1">
               {stats.typesCovered.map((type) => (
                 <TypeBadge key={type} type={type} />
@@ -79,22 +81,22 @@ const TeamCard = ({ team }: { team: Team }) => {
 
       {/* Pokemon List */}
       {team.pokemon.length > 0 ? (
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 sm:gap-3">
           {team.pokemon.map((pokemon) => (
-            <div key={pokemon.id} className="bg-gray-50 rounded-lg p-3 text-center">
+            <div key={pokemon.id} className="bg-gray-50 rounded-lg p-2 sm:p-3 text-center">
               <Image
                 src={pokemon.sprite}
                 alt={pokemon.name}
-                width={60}
-                height={60}
-                className="mx-auto object-contain"
+                width={50}
+                height={50}
+                className="mx-auto object-contain sm:w-[60px] sm:h-[60px]"
               />
-              <div className="mt-2">
-                <h5 className="font-medium text-sm capitalize text-gray-800">
+              <div className="mt-1 sm:mt-2">
+                <h5 className="font-medium text-xs sm:text-sm capitalize text-gray-800 truncate">
                   {pokemon.name}
                 </h5>
                 <div className="flex justify-center gap-1 mt-1">
-                  {pokemon.types.map((type) => (
+                  {pokemon.types.slice(0, 2).map((type) => (
                     <TypeBadge key={type} type={type} />
                   ))}
                 </div>
@@ -106,8 +108,8 @@ const TeamCard = ({ team }: { team: Team }) => {
           ))}
         </div>
       ) : (
-        <div className="text-center py-8 text-gray-500">
-          <p>No Pokemon in this team yet</p>
+        <div className="text-center py-6 sm:py-8 text-gray-500">
+          <p className="text-sm sm:text-base">No Pokemon in this team yet</p>
         </div>
       )}
     </div>
@@ -118,30 +120,42 @@ const Page = () => {
   const { teams } = useTeamContext();
 
   return (
-    <div className="flex flex-col items-center justify-items-center min-h-screen gap-2 p-2">
-      <div className="w-full max-w-6xl p-4">
-        <h1 className="text-3xl font-bold text-center mb-8">All Teams</h1>
+    <div className="flex flex-col items-center justify-items-center min-h-screen gap-2 p-2 sm:p-4 lg:p-8">
+      <div className="w-full max-w-7xl px-2 sm:px-4 lg:px-6">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row items-center justify-between relative mb-6 sm:mb-8 gap-4 sm:gap-0">
+          <Link
+            href="/pokemons"
+            className="inline-flex items-center px-3 py-2 sm:px-4 sm:py-2 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md text-sm sm:text-base order-2 sm:order-1"
+          >
+            <ArrowBack fontSize="small" className="mr-1 sm:mr-2" />
+            <span className="hidden sm:inline">Back to Home</span>
+            <span className="sm:hidden">Back</span>
+          </Link>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center order-1 sm:order-2">All Teams</h1>
+          <div className="w-full sm:w-auto order-3 sm:hidden"></div>
+        </div>
         
         {teams.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6">
             {teams.map((team) => (
               <TeamCard key={team.id} team={team} />
             ))}
           </div>
         ) : (
-          <div className="text-center py-12">
+          <div className="text-center py-8 sm:py-12">
             <div className="text-gray-400 mb-4">
-              <svg className="mx-auto h-16 w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="mx-auto h-12 sm:h-16 w-12 sm:w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
               </svg>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No teams created yet</h3>
-            <p className="text-gray-500 mb-6">
+            <h3 className="text-lg sm:text-xl font-medium text-gray-900 mb-2">No teams created yet</h3>
+            <p className="text-gray-500 mb-4 sm:mb-6 px-4 text-sm sm:text-base">
               Go to the Pokemon page to create your first team and start adding Pokemon!
             </p>
             <a
               href="/pokemons"
-              className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
+              className="inline-flex items-center px-4 py-2 sm:px-6 sm:py-3 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md text-sm sm:text-base"
             >
               Browse Pokemon
             </a>

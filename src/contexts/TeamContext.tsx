@@ -56,6 +56,23 @@ export function TeamProvider({ children }: TeamProviderProps) {
     return newTeam;
   }, []);
 
+  const editTeam = useCallback((teamId: string, newName: string) => {
+    setTeams((prev) =>
+      prev.map((team) => {
+        if (team.id === teamId) {
+          return { ...team, name: newName.trim() };
+        }
+        return team;
+      })
+    );
+    setCurrentTeam((prev) => {
+      if (prev?.id === teamId) {
+        return { ...prev, name: newName.trim() };
+      }
+      return prev;
+    });
+  }, []);
+
   const deleteTeam = useCallback((teamId: string) => {
     setTeams((prev) => prev.filter((team) => team.id !== teamId));
     setCurrentTeam((prev) => (prev?.id === teamId ? null : prev));
@@ -157,6 +174,7 @@ export function TeamProvider({ children }: TeamProviderProps) {
     currentTeam,
     setCurrentTeam,
     createTeam,
+    editTeam,
     deleteTeam,
     addPokemonToTeam,
     removePokemonFromTeam,

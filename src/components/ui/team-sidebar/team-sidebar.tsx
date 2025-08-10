@@ -41,40 +41,39 @@ const TypeBadge = memo(({ type }: { type: string }) => (
 ));
 TypeBadge.displayName = "TypeBadge";
 
-const PokemonTeamCard = memo(({ pokemon, onRemove }: { 
-  pokemon: TeamPokemon; 
-  onRemove: () => void; 
-}) => (
-  <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm">
-    <div className="flex items-center gap-3">
-      <Image
-        src={pokemon.sprite}
-        alt={pokemon.name}
-        width={40}
-        height={40}
-        className="object-contain"
-      />
-      <div className="flex-grow">
-        <h4 className="font-medium text-sm capitalize">{pokemon.name}</h4>
-        <div className="flex gap-1 mt-1">
-          {pokemon.types.map((type) => (
-            <TypeBadge key={type} type={type} />
-          ))}
+const PokemonTeamCard = memo(
+  ({ pokemon, onRemove }: { pokemon: TeamPokemon; onRemove: () => void }) => (
+    <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm">
+      <div className="flex items-center gap-3">
+        <Image
+          src={pokemon.sprite}
+          alt={pokemon.name}
+          width={40}
+          height={40}
+          className="object-contain"
+        />
+        <div className="flex-grow">
+          <h4 className="font-medium text-sm capitalize">{pokemon.name}</h4>
+          <div className="flex gap-1 mt-1">
+            {pokemon.types.map((type) => (
+              <TypeBadge key={type} type={type} />
+            ))}
+          </div>
+          <p className="text-xs text-gray-500 mt-1">
+            Base Exp: {pokemon.base_experience}
+          </p>
         </div>
-        <p className="text-xs text-gray-500 mt-1">
-          Base Exp: {pokemon.base_experience}
-        </p>
+        <button
+          onClick={onRemove}
+          className="text-red-500 hover:text-red-700 text-sm font-medium"
+          title="Remove from team"
+        >
+          ×
+        </button>
       </div>
-      <button
-        onClick={onRemove}
-        className="text-red-500 hover:text-red-700 text-sm font-medium"
-        title="Remove from team"
-      >
-        ×
-      </button>
     </div>
-  </div>
-));
+  )
+);
 PokemonTeamCard.displayName = "PokemonTeamCard";
 
 const TeamStats = memo(({ team }: { team: Team }) => {
@@ -113,19 +112,25 @@ const TeamStats = memo(({ team }: { team: Team }) => {
 });
 TeamStats.displayName = "TeamStats";
 
-const TeamSidebar = memo(function TeamSidebar({ isOpen, onClose }: TeamSidebarProps) {
-  const { 
-    teams, 
-    currentTeam, 
-    setCurrentTeam, 
-    createTeam, 
-    deleteTeam, 
+const TeamSidebar = memo(function TeamSidebar({
+  isOpen,
+  onClose,
+}: TeamSidebarProps) {
+  const {
+    teams,
+    currentTeam,
+    setCurrentTeam,
+    createTeam,
+    editTeam,
+    deleteTeam,
     removePokemonFromTeam,
-    MAX_TEAM_SIZE 
+    MAX_TEAM_SIZE,
   } = useTeamContext();
-  
+
   const [newTeamName, setNewTeamName] = useState("");
   const [isCreating, setIsCreating] = useState(false);
+  const [editingTeamId, setEditingTeamId] = useState<string | null>(null);
+  const [editTeamName, setEditTeamName] = useState("");
 
   const handleCreateTeam = useCallback(() => {
     if (newTeamName.trim()) {
@@ -135,61 +140,85 @@ const TeamSidebar = memo(function TeamSidebar({ isOpen, onClose }: TeamSidebarPr
     }
   }, [newTeamName, createTeam]);
 
-  const handleDeleteTeam = useCallback((teamId: string) => {
-    if (confirm("Are you sure you want to delete this team?")) {
-      deleteTeam(teamId);
-    }
-  }, [deleteTeam]);
+  const handleEditTeam = useCallback((teamId: string, currentName: string) => {
+    setEditingTeamId(teamId);
+    setEditTeamName(currentName);
+  }, []);
 
-  const handleRemovePokemon = useCallback((pokemonId: number) => {
-    if (currentTeam) {
-      removePokemonFromTeam(currentTeam.id, pokemonId);
+  const handleSaveEdit = useCallback(() => {
+    if (editingTeamId && editTeamName.trim()) {
+      editTeam(editingTeamId, editTeamName.trim());
+      setEditingTeamId(null);
+      setEditTeamName("");
     }
-  }, [currentTeam, removePokemonFromTeam]);
+  }, [editingTeamId, editTeamName, editTeam]);
+
+  const handleCancelEdit = useCallback(() => {
+    setEditingTeamId(null);
+    setEditTeamName("");
+  }, []);
+
+  const handleDeleteTeam = useCallback(
+    (teamId: string) => {
+      if (confirm("Are you sure you want to delete this team?")) {
+        deleteTeam(teamId);
+      }
+    },
+    [deleteTeam]
+  );
+
+  const handleRemovePokemon = useCallback(
+    (pokemonId: number) => {
+      if (currentTeam) {
+        removePokemonFromTeam(currentTeam.id, pokemonId);
+      }
+    },
+    [currentTeam, removePokemonFromTeam]
+  );
 
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex">
-      <div className="fixed inset-0 bg-black bg-opacity-50" onClick={onClose} />
-      <div className="relative ml-auto w-96 bg-white h-full shadow-xl overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b border-gray-200 p-4">
+      <div className="fixed inset-0 bg-black bg-opacity-25 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative ml-auto w-full sm:w-96 max-w-md bg-white h-full shadow-xl overflow-y-auto">
+        <div className="sticky top-0 bg-white border-b border-gray-200 p-3 sm:p-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-xl font-bold">Teams</h2>
+            <h2 className="text-lg sm:text-xl font-bold">Teams</h2>
             <button
               onClick={onClose}
-              className="text-gray-500 hover:text-gray-700"
+              className="text-gray-500 hover:text-gray-700 p-1 text-xl"
             >
               ×
             </button>
           </div>
         </div>
 
-        <div className="p-4 space-y-4">
+        <div className="p-3 sm:p-4 space-y-3 sm:space-y-4">
           {/* Create Team Section */}
-          <div className="bg-gray-50 rounded-lg p-4">
-            <h3 className="font-semibold mb-2">Create New Team</h3>
+          <div className="bg-gray-50 rounded-lg p-3 sm:p-4">
+            <h3 className="font-semibold mb-2 text-sm sm:text-base">Create New Team</h3>
             {!isCreating ? (
               <button
                 onClick={() => setIsCreating(true)}
-                className="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md font-medium"
+                className="w-full bg-green-600 hover:bg-green-700 text-white py-2.5 px-4 rounded-md font-medium text-sm sm:text-base"
               >
                 + New Team
               </button>
             ) : (
-              <div className="space-y-2">
+              <div className="space-y-2 sm:space-y-3">
                 <input
                   type="text"
                   value={newTeamName}
                   onChange={(e) => setNewTeamName(e.target.value)}
                   placeholder="Team name"
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
+                  className="w-full border border-gray-300 rounded-md px-3 py-2.5 text-sm sm:text-base"
                   onKeyDown={(e) => e.key === "Enter" && handleCreateTeam()}
                 />
                 <div className="flex gap-2">
                   <button
                     onClick={handleCreateTeam}
-                    className="flex-1 bg-green-600 hover:bg-green-700 text-white py-1 px-3 rounded-md text-sm"
+                    className="flex-1 bg-green-600 hover:bg-green-700 text-white py-2 px-3 rounded-md text-sm"
                   >
                     Create
                   </button>
@@ -198,7 +227,7 @@ const TeamSidebar = memo(function TeamSidebar({ isOpen, onClose }: TeamSidebarPr
                       setIsCreating(false);
                       setNewTeamName("");
                     }}
-                    className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-1 px-3 rounded-md text-sm"
+                    className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-3 rounded-md text-sm"
                   >
                     Cancel
                   </button>
@@ -214,30 +243,79 @@ const TeamSidebar = memo(function TeamSidebar({ isOpen, onClose }: TeamSidebarPr
               {teams.map((team) => (
                 <div
                   key={team.id}
-                  className={`border rounded-lg p-3 cursor-pointer transition-colors ${
+                  className={`border rounded-lg p-3 transition-colors ${
                     currentTeam?.id === team.id
                       ? "border-blue-500 bg-blue-50"
                       : "border-gray-200 hover:bg-gray-50"
                   }`}
-                  onClick={() => setCurrentTeam(team)}
                 >
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="font-medium">{team.name}</h4>
-                      <p className="text-sm text-gray-500">
-                        {team.pokemon.length}/{MAX_TEAM_SIZE} Pokemon
-                      </p>
+                  {editingTeamId === team.id ? (
+                    // Edit Mode
+                    <div className="space-y-2">
+                      <input
+                        type="text"
+                        value={editTeamName}
+                        onChange={(e) => setEditTeamName(e.target.value)}
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleSaveEdit();
+                          if (e.key === "Escape") handleCancelEdit();
+                        }}
+                        autoFocus
+                      />
+                      <div className="flex gap-2">
+                        <button
+                          onClick={handleSaveEdit}
+                          className="flex-1 bg-green-600 hover:bg-green-700 text-white py-1 px-3 rounded-md text-xs"
+                        >
+                          Save
+                        </button>
+                        <button
+                          onClick={handleCancelEdit}
+                          className="flex-1 bg-gray-300 hover:bg-gray-400 text-gray-700 py-1 px-3 rounded-md text-xs"
+                        >
+                          Cancel
+                        </button>
+                      </div>
                     </div>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteTeam(team.id);
-                      }}
-                      className="text-red-500 hover:text-red-700 text-sm"
+                  ) : (
+                    // Normal Mode
+                    <div 
+                      className="cursor-pointer"
+                      onClick={() => setCurrentTeam(team)}
                     >
-                      Delete
-                    </button>
-                  </div>
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <h4 className="font-medium">{team.name}</h4>
+                          <p className="text-sm text-gray-500">
+                            {team.pokemon.length}/{MAX_TEAM_SIZE} Pokemon
+                          </p>
+                        </div>
+                        <div className="flex gap-1">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEditTeam(team.id, team.name);
+                            }}
+                            className="text-blue-500 hover:text-blue-700 text-xs px-2 py-1 rounded"
+                            title="Edit team name"
+                          >
+                            Edit
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteTeam(team.id);
+                            }}
+                            className="text-red-500 hover:text-red-700 text-xs px-2 py-1 rounded"
+                            title="Delete team"
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
               {teams.length === 0 && (
@@ -251,9 +329,11 @@ const TeamSidebar = memo(function TeamSidebar({ isOpen, onClose }: TeamSidebarPr
           {/* Current Team Details */}
           {currentTeam && (
             <div>
-              <h3 className="font-semibold mb-2">Current Team: {currentTeam.name}</h3>
+              <h3 className="font-semibold mb-2">
+                Current Team: {currentTeam.name}
+              </h3>
               <TeamStats team={currentTeam} />
-              
+
               <div className="space-y-2">
                 {currentTeam.pokemon.map((pokemon) => (
                   <PokemonTeamCard

@@ -26,6 +26,7 @@ export interface TeamContextType {
   currentTeam: Team | null;
   setCurrentTeam: (team: Team | null) => void;
   createTeam: (name: string) => Team;
+  editTeam: (teamId: string, newName: string) => void;
   deleteTeam: (teamId: string) => void;
   addPokemonToTeam: (teamId: string, pokemonDetails: PokemonDetails) => void;
   removePokemonFromTeam: (teamId: string, pokemonId: number) => void;

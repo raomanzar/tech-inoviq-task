@@ -187,29 +187,36 @@ export default function Pokemons() {
 
   return (
     <div
-      className={` flex flex-col items-center justify-items-center min-h-screen gap-2 p-2`}
+      className="flex flex-col items-center justify-items-center min-h-screen gap-2 p-2 sm:p-4 lg:p-8"
     >
-      <div className="w-full p-4 !w-[70%] flex flex-col gap-3 items-center">
-        <div className="ml-auto flex gap-2">
-          <button
-            onClick={() => setIsSidebarOpen(true)}
-            className="inline-flex items-center px-4 py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
-          >
-            Manage Teams
-          </button>
-          <Link
-            href={"/teams"}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md"
-          >
-            All Teams
-          </Link>
+      <div className="w-full max-w-7xl px-2 sm:px-4 lg:px-6 flex flex-col gap-3 sm:gap-4 lg:gap-6 items-center">
+        {/* Action Buttons */}
+        <div className="w-full flex justify-end">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-3">
+            <button
+              onClick={() => setIsSidebarOpen(true)}
+              className="cursor-pointer inline-flex items-center justify-center px-3 py-2 sm:px-4 sm:py-2 bg-green-600 hover:bg-green-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md text-sm sm:text-base"
+            >
+              <span className="hidden sm:inline">Manage Teams</span>
+              <span className="sm:hidden">Teams</span>
+            </button>
+            <Link
+              href={"/teams"}
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center px-3 py-2 sm:px-4 sm:py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors duration-200 shadow-sm hover:shadow-md text-sm sm:text-base"
+            >
+              <span className="hidden sm:inline">All Teams</span>
+              <span className="sm:hidden">View All</span>
+            </Link>
+          </div>
         </div>
-        <div className="flex justify-between w-full">
-          {" "}
-          <h1 className="text-3xl font-bold text-center">Pokemons</h1>
-          <SearchBar {...searchBarProps} />
+        
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row justify-between items-center w-full gap-3 sm:gap-4">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-center sm:text-left order-2 sm:order-1">Pokemons</h1>
+          <div className="w-full sm:w-auto order-1 sm:order-2">
+            <SearchBar {...searchBarProps} />
+          </div>
         </div>
         {isSearching && pokemonDetails ? (
           <PokemonCard pokemon={pokemonDetails} onBack={clearSearch} />
@@ -217,18 +224,16 @@ export default function Pokemons() {
           /* Display Table for paginated results */
           <>
             <PokemonTable {...pokemonTableProps} />
-
             {/* Only show pagination if not searching */}
             {!isSearching && <Pagination {...paginationProps} />}
           </>
         )}
       </div>
 
-      <TeamSidebar 
-        isOpen={isSidebarOpen} 
-        onClose={() => setIsSidebarOpen(false)} 
+      <TeamSidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
       />
     </div>
   );
 }
-
